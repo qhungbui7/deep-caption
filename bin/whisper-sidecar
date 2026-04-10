@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Whisper.cpp sidecar wrapper")
+    parser.add_argument("--mode", default="transcribe")
+    parser.add_argument("--model", required=True)
+    parser.add_argument("--audio", required=True)
+    parser.add_argument("--language", default="auto")
+    parser.add_argument("--prompt", default="")
+    parser.add_argument("--threads", type=int, default=4)
+    parser.add_argument("--json", action="store_true")
+    parser.add_argument("--whisper-cli", default="")
+    args = parser.parse_args()
+
+    cli = _resolve_cli(args.whisper_cli)
+    if cli is None:
+        print(json.dumps(_empty_payload(error="whisper.cpp CLI not found")))
+        return 0
+
+    cmd = [
+        str(cli),
+        "-m",
+        args.model,
+        "-f",
+        args.audio,
+        "-l",
+        args.language,
+        "-t",
+        str(args.threads),
+    ]
+    if args.prompt:
+        cmd.extend(["--prompt", args.prompt])
+    with tempfile.TemporaryDirectory(prefix="whisper-sidecar-") as temp_dir:
+        out_base = Path(temp_dir) / "result"
+        cmd.extend(["-oj", "-of", str(out_base)])
+
+        completed = subprocess.run(cmd, capture_output=True, text=True, check=False)
+        payload = _parse_whisper_json(out_base.with_suffix(".json"))
+        if not payload["text"]:
+            payload["error"] = completed.stderr.strip()
+    print(json.dumps(payload, ensure_ascii=True))
+    return 0
+
+
+def _resolve_cli(explicit: str) -> Path | None:
+    if explicit:
+        path = Path(explicit)
+        if path.exists():
+            return path
+    candidates = [
+        Path("vendor/whisper.cpp/build/bin/whisper-cli"),
+        Path("vendor/whisper.cpp/build/bin/main"),
+        Path("whisper-cli"),
+    ]
+    for candidate in candidates:
+        if candidate.is_absolute() and candidate.exists():
+            return candidate
+        if not candidate.is_absolute():
+            found = _which(candidate.name)
+            if found is not None:
+                return found
+            local = Path.cwd() / candidate
+            if local.exists():
+                return local
+    return None
+
+
+def _which(binary: str) -> Path | None:
+    result = subprocess.run(["which", binary], capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        return None
+    resolved = result.stdout.strip()
+    return Path(resolved) if resolved else None
+
+
+def _parse_whisper_json(path: Path) -> dict[str, object]:
+    if not path.exists():
+        return _empty_payload()
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return _empty_payload()
+    segments = payload.get("transcription", [])
+    text_parts: list[str] = []
+    first_start = 0
+    last_end = 0
+    if isinstance(segments, list):
+        for idx, seg in enumerate(segments):
+            if not isinstance(seg, dict):
+                continue
+            text = str(seg.get("text", "")).strip()
+            text_parts.append(text)
+            start_ms = int(float(seg.get("offsets", {}).get("from", 0)) / 10.0)
+            end_ms = int(float(seg.get("offsets", {}).get("to", 0)) / 10.0)
+            if idx == 0:
+                first_start = start_ms
+            last_end = max(last_end, end_ms)
+    text = " ".join(part for part in text_parts if part).strip()
+    detected_lang = str(payload.get("result", {}).get("language", "und"))
+    return {
+        "text": text,
+        "language": detected_lang,
+        "start_ms": first_start,
+        "end_ms": last_end,
+        "avg_logprob": None,
+    }
+
+
+def _empty_payload(error: str = "") -> dict[str, object]:
+    return {
+        "text": "",
+        "language": "und",
+        "start_ms": 0,
+        "end_ms": 0,
+        "avg_logprob": None,
+        "error": error,
+    }
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

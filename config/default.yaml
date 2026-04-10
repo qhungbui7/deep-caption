@@ -1,0 +1,51 @@
+app:
+  mode: voice
+  target_language: vi
+  show_source_text: true
+  overlay_enabled: true
+
+audio:
+  source: system
+  sample_rate: 16000
+  frame_ms: 30
+
+vad:
+  backend: silero
+  model_path: models/silero_vad.onnx
+  start_threshold: 0.55
+  end_threshold: 0.30
+  min_speech_ms: 120
+  min_silence_ms: 350
+  preroll_ms: 200
+  postroll_ms: 300
+
+asr:
+  backend: whisper_cpp
+  binary_path: bin/whisper-sidecar
+  model: vendor/whisper.cpp/models/ggml-large-v3-turbo.bin
+  language: auto
+  partial_interval_ms: 400
+  final_silence_commit_ms: 700
+  prompt_chars: 128
+  max_chunk_ms: 6000
+  threads: 4
+
+translation:
+  backend: auto
+  argos_enabled: true
+  opus_enabled: true
+  nllb_enabled: false
+  prefer_english_pivot: true
+  cache_size: 4096
+
+overlay:
+  width_ratio: 0.45
+  bottom_margin_px: 80
+  max_lines: 2
+  opacity: 0.85
+  click_through: true
+
+platform:
+  linux_overlay_backend: auto
+  mac_capture_helper_socket: /tmp/deep-caption-mac.sock
+  mac_capture_helper_path: helpers/mac_audio_capture/.build/release/mac_audio_capture

@@ -1,0 +1,13 @@
+{
+  "": {
+    "dependencies": "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/mac_audio_capture.d",
+    "object": "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/mac_audio_capture.o",
+    "swift-dependencies": "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/master.swiftdeps"
+  },
+  "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/Sources/mac_audio_capture/main.swift": {
+    "object": "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/main.swift.o",
+    "swiftmodule": "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/main.swiftdeps",
+    "diagnostics": "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/main.dia"
+  }
+}

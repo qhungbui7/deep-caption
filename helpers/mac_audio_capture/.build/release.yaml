@@ -1,0 +1,66 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "PackageStructure": ["<PackageStructure>"]
+  "mac_audio_capture-arm64-apple-macosx26.0-release.exe": ["<mac_audio_capture-arm64-apple-macosx26.0-release.exe>"]
+  "mac_audio_capture-arm64-apple-macosx26.0-release.module": ["<mac_audio_capture-arm64-apple-macosx26.0-release.module>"]
+  "main": ["<mac_audio_capture-arm64-apple-macosx26.0-release.exe>","<mac_audio_capture-arm64-apple-macosx26.0-release.module>"]
+  "test": ["<mac_audio_capture-arm64-apple-macosx26.0-release.exe>","<mac_audio_capture-arm64-apple-macosx26.0-release.module>"]
+default: "main"
+nodes:
+  "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/Sources/mac_audio_capture/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/Sources/mac_audio_capture/main.swift"]
+    outputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/sources"]
+    description: "Write auxiliary file /Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/sources"
+
+  "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs: ["<link-file-list>","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/main.swift.o"]
+    outputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.product/Objects.LinkFileList"
+
+  "/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Library/Developer/CommandLineTools/usr/bin/swiftc"]
+    outputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
+
+  "<mac_audio_capture-arm64-apple-macosx26.0-release.exe>":
+    tool: phony
+    inputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture"]
+    outputs: ["<mac_audio_capture-arm64-apple-macosx26.0-release.exe>"]
+
+  "<mac_audio_capture-arm64-apple-macosx26.0-release.module>":
+    tool: phony
+    inputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/main.swift.o","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/Modules/mac_audio_capture.swiftmodule"]
+    outputs: ["<mac_audio_capture-arm64-apple-macosx26.0-release.module>"]
+
+  "C.mac_audio_capture-arm64-apple-macosx26.0-release.exe":
+    tool: shell
+    inputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/main.swift.o","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.product/Objects.LinkFileList"]
+    outputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture"]
+    description: "Linking ./.build/arm64-apple-macosx/release/mac_audio_capture"
+    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-L","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release","-o","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture","-module-name","mac_audio_capture","-Xlinker","-no_warn_duplicate_libraries","-emit-executable","-Xlinker","-dead_strip","-Xlinker","-alias","-Xlinker","_mac_audio_capture_main","-Xlinker","_main","-Xlinker","-rpath","-Xlinker","@loader_path","@/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.product/Objects.LinkFileList","-Xlinker","-rpath","-Xlinker","/Library/Developer/CommandLineTools/usr/lib/swift-6.2/macosx","-target","arm64-apple-macosx13.0","-framework","ScreenCaptureKit","-framework","AVFoundation","-I","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-L","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-plugin-path","/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g"]
+
+  "C.mac_audio_capture-arm64-apple-macosx26.0-release.module":
+    tool: shell
+    inputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/Sources/mac_audio_capture/main.swift","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/sources"]
+    outputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/main.swift.o","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/Modules/mac_audio_capture.swiftmodule"]
+    description: "Compiling Swift Module 'mac_audio_capture' (1 sources)"
+    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-module-name","mac_audio_capture","-emit-dependencies","-emit-module","-emit-module-path","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/Modules/mac_audio_capture.swiftmodule","-output-file-map","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/output-file-map.json","-whole-module-optimization","-num-threads","10","-c","@/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/mac_audio_capture.build/sources","-I","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/Modules","-target","arm64-apple-macosx13.0","-whole-module-optimization","-num-threads","10","-serialize-diagnostics","-O","-j10","-DSWIFT_PACKAGE","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/.build/arm64-apple-macosx/release/ModuleCache","-parseable-output","-Xfrontend","-entry-point-function-name","-Xfrontend","mac_audio_capture_main","-color-diagnostics","-swift-version","5","-I","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-L","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-plugin-path","/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g","-Xcc","-isysroot","-Xcc","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-Xcc","-fPIC","-Xcc","-g","-package-name","mac_audio_capture"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/Sources/mac_audio_capture/","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/Package.swift","/Users/qhungbui7/workspace/deep-caption/helpers/mac_audio_capture/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+
